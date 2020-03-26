@@ -1,2 +1,2 @@
 # osur
-Operating Systems for Embedded Computers course repository containing laboratory excersizes.
+Operating Systems for Embedded Computers course repository containing laboratory excersises.
