@@ -24,6 +24,22 @@ int stdio_init ()
 	return EXIT_SUCCESS;
 }
 
+/*! Writes a string to stdout up to but not including the null character.
+ *  A newline character is appended to the output.
+ */
+int puts( char *text )
+{
+  char text_to_print[CONSOLE_MAXLEN];
+  strcpy(text_to_print, text);
+
+  int len = strlen(text_to_print);
+  text_to_print[len] = '\n';        //.print in vga_text
+                                    //will process \n
+  text_to_print[len + 1] = 0;
+
+  return u_stdout->print( text_to_print );
+}
+
 /*! Formated output to console (lightweight version of 'printf') */
 int printf ( char *format, ... )
 {
