@@ -5,6 +5,7 @@
 
 /*! Kernel dynamic memory --------------------------------------------------- */
 #include <lib/ff_simple.h>
+#include <lib/ff_simple3.h>
 #include <lib/gma.h>
 
 #if MEM_ALLOCATOR == FIRST_FIT
@@ -20,6 +21,14 @@
 #define	K_MEM_INIT(segment, size)	gma_init ( segment, size, 32, 0 )
 #define	KMALLOC(size)			gma_alloc ( k_mpool, size )
 #define	KFREE(addr)			gma_free ( k_mpool, addr )
+
+#elif MEM_ALLOCATOR == FIRST_FIT3
+
+#define MEM_ALLOC_T ffs3_mpool_t
+#define K_MEM_INIT(segment, size) ffs3_init( segment, size )
+#define KMALLOC(size) ffs3_alloc ( k_mpool, size )
+#define KFREE(addr) ffs3_free ( k_mpool, addr )
+
 
 #else /* memory allocator not selected! */
 
