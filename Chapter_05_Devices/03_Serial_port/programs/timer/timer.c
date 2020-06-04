@@ -17,6 +17,11 @@ static void alarm_nt ( sigval_t param )
 
 	printf ( "[%d:%d] Alarm %d (every %d seconds)\n",
 		t.tv_sec, t.tv_nsec/100000000, num, num );
+
+	timespec_t tim;
+	clock_gettime(CLOCK_REALTIME, &tim);
+	printf ( "System time: %d:%d\n", tim.tv_sec, tim.tv_nsec/100000000 );
+
 }
 
 int timer ()
