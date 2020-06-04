@@ -36,14 +36,20 @@ int debug ()
 
 #if 1	/* compile with 'debug=yes' and without */
 	//LOG ( WARN, "This is log entry with WARN relevance" );
+	LOG ( INFO, "The entire system (data, code & bss) moved to 0x200000");
+	LOG ( INFO, "'a' is on the stack, so it should be around 0x600000");
+	LOG ( INFO, "Debug should be closest to 0x200000 since .instrukcije comes first");
+	LOG ( INFO, "'x' is in .data, so it should be more than addr of debug, since data comes after .instrukcije");
+	LOG ( INFO, "'y' is in .bss, so it should be more than addr of x, since bss comes after data");
 
 	LOG ( INFO, "Address of 'a' is %x", &a );
+	LOG ( INFO, "Address of 'debug' is %x", debug);
 	LOG ( INFO, "Address of 'x' is %x", &x );
 	LOG ( INFO, "Address of 'y' is %x", y );
-	LOG ( INFO, "Address of 'debug' is %x", debug );
-	extern int xxxx;
-	LOG ( INFO, "Address of 'xxxx' is %x", xxxx );
-	LOG ( INFO, "Address of 'xxxx' is %x", &xxxx );
+
+
+	extern int end_address;
+	LOG( INFO, "End address: %x", &end_address);
 
 
 	//ASSERT_ERRNO_AND_RETURN ( TRUE, EINVAL );
