@@ -4,6 +4,7 @@
 #include <types/basic.h>
 
 /* "programs" */
+int disk_demo();
 int hello_world ();
 int timer ();
 int keyboard ();

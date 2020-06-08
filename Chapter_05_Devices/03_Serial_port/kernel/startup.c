@@ -10,6 +10,8 @@
 #include <arch/processor.h>
 #include <api/stdio.h>
 #include <api/prog_info.h>
+#include <lib/string.h>
+#include "fs.h"
 
 char system_info[] = 	OS_NAME ": " NAME_MAJOR ":" NAME_MINOR ", "
 			"Version: " VERSION " (" ARCH ")";
@@ -53,12 +55,15 @@ void k_startup ()
 	/* enable interrupts */
 	enable_interrupts ();
 
+	k_fs_init("DISK", 512, 4096);
+
 	stdio_init (); /* initialize standard input & output devices */
 
 	/* start desired program(s) */
-	hello_world ();
-	keyboard ();
-	timer ();
+	disk_demo ();
+	//hello_world ();
+	//keyboard ();
+	//timer ();
 	/* segm_fault (); */
 
 	kprintf ( "\nSystem halted!\n" );

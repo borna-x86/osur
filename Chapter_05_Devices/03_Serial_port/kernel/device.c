@@ -7,6 +7,7 @@
 #include "memory.h"
 #include <arch/interrupt.h>
 #include <lib/string.h>
+#include "fs.h"
 
 static list_t devices;
 
@@ -250,6 +251,17 @@ int sys__open ( char *pathname, int flags, mode_t mode, descriptor_t *desc )
 	ASSERT_ERRNO_AND_EXIT ( pathname, EINVAL );
 	ASSERT_ERRNO_AND_EXIT ( desc, EINVAL );
 
+	/* Before we try to open with k_device */
+	if(strstr(pathname, "file:") == pathname) {
+		int retval = k_fs_open_file(pathname, flags, mode, desc);
+		
+		if(retval >= 0) {
+			SYS_EXIT(EXIT_SUCCESS, retval);
+		} else {
+			SYS_EXIT(-retval, -1);
+		}
+	}
+
 	kdev = k_device_open ( pathname, flags );
 
 	if ( !kdev )
@@ -279,6 +291,17 @@ int sys__close ( descriptor_t *desc )
 
 	ASSERT_ERRNO_AND_EXIT ( desc, EINVAL );
 
+	if(k_fs_is_file_open(desc) == 0) {
+		int retval = k_fs_close_file(desc);
+
+		if(retval == 0) {
+			SYS_EXIT(EXIT_SUCCESS, retval);
+		} else {
+			SYS_EXIT(-retval, -1);
+		}
+	}	
+
+
 	kobj = desc->ptr;
 	ASSERT_ERRNO_AND_EXIT ( kobj, EINVAL );
 	ASSERT_ERRNO_AND_EXIT ( list_find ( &kobjects, &kobj->list ),
@@ -286,11 +309,10 @@ int sys__close ( descriptor_t *desc )
 	kdev = kobj->kobject;
 	ASSERT_ERRNO_AND_EXIT ( kdev && kdev->id == desc->id, EINVAL );
 
-	kfree_kobject ( kobj );
 
 	/* remove descriptor from device list */
 	list_remove ( &kdev->descriptors, 0, &kobj->spec );
-
+	kfree_kobject ( kobj ); /* fixed use-after-free */
 	k_device_close ( kdev );
 
 	SYS_EXIT ( EXIT_SUCCESS, EXIT_SUCCESS );
@@ -316,6 +338,15 @@ static int read_write ( descriptor_t *desc, void *buffer, size_t size, int op )
 	SYS_ENTRY();
 
 	ASSERT_ERRNO_AND_EXIT ( desc && buffer && size > 0, EINVAL );
+
+	if (k_fs_is_file_open(desc) == 0) {
+		int retval = k_fs_read_write(desc, buffer, size, op);
+		if (retval > 0) {
+			SYS_EXIT(EXIT_SUCCESS, retval);
+		} else {
+			SYS_EXIT(EXIT_FAILURE, retval);
+		}
+	}
 
 	kobj = desc->ptr;
 	ASSERT_ERRNO_AND_EXIT ( kobj, EINVAL );
@@ -346,6 +377,10 @@ int sys__device_status ( descriptor_t *desc, int flags )
 	SYS_ENTRY();
 
 	ASSERT_ERRNO_AND_EXIT ( desc, EINVAL );
+
+	if(k_fs_is_file_open(desc) == 0) {
+		SYS_EXIT(EXIT_SUCCESS, rflags);
+	}
 
 	kobj = desc->ptr;
 	ASSERT_ERRNO_AND_EXIT ( kobj, EINVAL );
