@@ -33,5 +33,5 @@ void k_startup ()
    debug ();
 
    kprintf ( "\nSystem halted!\n" );
-   halt ()
+   halt ();
 }

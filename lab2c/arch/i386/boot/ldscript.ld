@@ -23,6 +23,7 @@ SECTIONS {
 	}
 	.bss :
 	{
+		bss_addr = .;
 		*( .bss* COMMON* )
 
 		. = ALIGN (4096);
