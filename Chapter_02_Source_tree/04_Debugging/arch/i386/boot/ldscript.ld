@@ -13,13 +13,13 @@ SECTIONS {
 		*?/boot/startup.asm.o ( .text* )
 		*?/boot/premjesti.o ( .text* )
 	}
-	.instrukcije 0x200000 : AT(0x100000)
+	.instrukcije 0x200000 : AT(0x10000)
 	{
 		*( .text* )
 	}
-	size_i = SIZEOF(.instrukcije);
+	size_instrukcije = SIZEOF(.instrukcije);
 
-	.data :
+	.data 0x400000: AT(0x40000)
 	{
 		kernel_data_addr = .;
 
@@ -28,14 +28,13 @@ SECTIONS {
 	}
 
 	size_data = SIZEOF(.data);
-
-	.bss :
+	.bss 0x800000: AT(0x80000)
 	{
 		*( .bss* COMMON* )
 
 		. = ALIGN (4096);
 	}
-	
+	size_bss = SIZEOF(.bss);
 	end_address = .;
 
 	.stog_u_slici 0x600000: AT(0x90000)
@@ -43,6 +42,8 @@ SECTIONS {
 		*( .stog )
 		. = ALIGN (4096);
 	}
+	size_stack = SIZEOF(.bss);
+
 	/*
 	 * what with other sections generated with gcc (various versions)?
 	 * if optimizing for size discard them with: /DISCARD/ : { *(*) }

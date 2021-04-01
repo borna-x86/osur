@@ -32,7 +32,7 @@ void k_startup ()
 	k_stdout = &K_STDOUT;
 	k_stdout->init (0);
 
-	//kprintf ( "%s\n", system_info );
+	kprintf ( "%s\n", system_info );
 
 	stdio_init (); /* initialize standard output devices */
 
