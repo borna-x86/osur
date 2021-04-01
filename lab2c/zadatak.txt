@@ -1,0 +1,20 @@
+Koraci 1-4 bi trebali biti već napravljeni
+1. Postaviti se u granu master
+2. Napraviti novu granu lab2x
+3. Napraviti direktorij lab2[x] (x je a, b, c ili d)
+4. U taj direktorij extrahirati zadanu arhivu (ne u dodatni direktorij!)
+
+5. Otići u taj direktorij
+6. Pronaći i ispraviti greške u kodu (koje se javljaju pri prevođenju)
+7. Pokrenuti izgrađeni sustav u debuggeru
+   a) bilježiti sve daljnje naredbe u debugger-u datoteku rezultati.txt
+   b) postaviti breakpoint na početnu funkciju kernel/startup.c:startup
+   c) bez postavljanja dodatnih breakpoint-a pratiti rad programa do:
+       linije 30 datoteke debug/debug.c
+   d) ispisati vrijednosti varijabli a, b i c
+   e) Zaustaviti debugger, očistiti repozitorij (make cleanall)
+8. Pronaći gdje je deklarirana te gdje se sve koristi "skrivena_varijabla" -
+   što izravno što neizravno (preko makroa).
+   SVE te lokacije navesti u rezultati.txt.
+   U kojem se izlaznom odjeljku nalazi ta varijabla (.code, .data ili .bss)?
+9. Pohraniti promjene u repozitorij (git add, commit, push origin lab2x).
