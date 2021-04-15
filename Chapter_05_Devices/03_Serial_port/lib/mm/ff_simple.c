@@ -2,10 +2,12 @@
 
 #define _FF_SIMPLE_C_
 #include <lib/ff_simple.h>
+#include <lib/string.h>
 
 #ifndef ASSERT
 #include ASSERT_H
 #endif
+
 
 /*!
  * Initialize dynamic memory manager
@@ -51,6 +53,64 @@ void *ffs_init ( void *mem_segm, size_t size )
 
 	return mpool;
 }
+
+void *realloc(ffs_mpool_t* mpool, void *ptr, size_t new_size) {
+	// ptr - what alloc previously returned
+	// assuming new_size > current size, we are expanding memory
+
+	//assuming *ptr is in use, size is before ptr (ffs_tail_t is a header of an in use chunk)
+	ffs_tail_t *tail;
+	tail = (ffs_tail_t*)(ptr - sizeof(ffs_tail_t));
+
+	// this chunk is large enough to expand
+	if(tail->size > new_size) {
+		return ptr;
+	}
+
+	int bytes_required = new_size - tail->size;
+
+	//chunk after
+	ffs_hdr_t *after_chunk;
+	after_chunk = GET_AFTER(ptr);
+
+	int needs_realloc = 1;
+	// is right chunk free?
+	if(CHECK_FREE(after_chunk)) {
+		// we can merge?
+		int right_size = after_chunk->size;
+		if(right_size > bytes_required) {
+			needs_realloc = 0;
+			// the right chunk is large enough to accomodate request
+
+			// it's left side is turned into a used chunk, it's right side remains in free list
+			after_chunk->size = bytes_required;
+			CLONE_SIZE_TO_TAIL(after_chunk)
+			ffs_remove_chunk(after_chunk);
+
+			// the right side of right chunk remains in free list
+			ffs_hdr_t *split_remaining;
+			split_remaining = GET_AFTER(after_chunk);
+			split_remaining->size = right_size - bytes_required;
+			CLONE_SIZE_TO_TAIL(split_remaining);
+		}
+	} 
+
+	// we couldn't merge with the chunk immediately after, look for chunk large enough
+	// ok ovdje imam problem - nemam pristup memory pool-u i ne znam kako doci do nekog slobodnog chunka
+	// da mogu sa -> prev doci do prvog pa naci dovoljno velik, pa kopirati (ili iterirati po chunkovima)
+
+	// idemo reci da mpool ulazi u funkciju
+	if(needs_realloc) {
+		// vec je 17:44, pa koristim postojeci alloc
+		void* new_mem = ffs_alloc(mpool, new_size);
+		memcpy(new_mem, ptr, tail->size);
+		return new_mem;
+	}
+
+	return ptr;
+	
+}
+
 
 /*!
  * Get free chunk with required size (or slightly bigger)
