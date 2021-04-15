@@ -16,7 +16,7 @@ char system_info[] = 	OS_NAME ": " NAME_MAJOR ":" NAME_MINOR ", "
 
 /* state of kernel features */
 uint kernel_features = FEATURE_SUPPORTED; /* initially set all to "on" state */
-
+int demo();
 /*!
  * First kernel function (after boot loader loads it to memory)
  */
