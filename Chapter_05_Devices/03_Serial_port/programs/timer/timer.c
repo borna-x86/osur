@@ -20,7 +20,7 @@ static void alarm_nt ( sigval_t param )
 
 	timespec_t tim;
 	clock_gettime(CLOCK_REALTIME, &tim);
-	printf ( "System time: %d:%d\n", tim.tv_sec, tim.tv_nsec/100000000 );
+	printf ( "System time: %d:%d\n", tim.tv_sec, tim.tv_nsec );
 
 }
 
@@ -36,7 +36,7 @@ int timer ()
 
 	clock_gettime ( CLOCK_REALTIME, &t );
 	t0 = t;
-	printf ( "System time: %d:%d\n", t.tv_sec, t.tv_nsec/100000000 );
+	printf ( "System time: %d:%d\n", t.tv_sec, t.tv_nsec );
 
 	evp.sigev_notify = SIGEV_THREAD;
 	evp.sigev_notify_function = alarm_nt;
@@ -68,7 +68,7 @@ int timer ()
 			printf ( "Interrupted sleep?\n" );
 
 	clock_gettime ( CLOCK_REALTIME, &t );
-	printf ( "System time: %d:%d\n", t.tv_sec, t.tv_nsec / 100000000 );
+	printf ( "System time: %d:%d\n", t.tv_sec, t.tv_nsec );
 
 	timer_delete ( &timer1 );
 	timer_delete ( &timer2 );
