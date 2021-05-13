@@ -53,7 +53,7 @@ void arch_timer_init ()
  * \param time Time of next activation
  * \param alarm_func Function to call upon timer expiration
  */
-void arch_timer_set ( timespec_t *time, void *alarm_func )
+void arch_timer_set ( timespec_t *abs_time, void *alarm_func )
 {
 	timespec_t remainder;
 
@@ -61,7 +61,11 @@ void arch_timer_set ( timespec_t *time, void *alarm_func )
 	time_sub ( &last_load, &remainder );
 	time_add ( &clock, &last_load );
 
-	delay = *time;
+	// izracun delay-a iz abs_time
+	timespec_t remaining_time = abs_time;
+	time_sub(&remaining_time, &clock);
+
+	delay = remaining_time;
 	if ( time_cmp ( &delay, &timer->min_interval ) < 0 )
 		delay = timer->min_interval;
 

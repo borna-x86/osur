@@ -325,7 +325,7 @@ static void ktimer_schedule ()
 			if ( next != NULL )
 			{
 				ref_time = next->itimer.it_value;
-				time_sub ( &ref_time, &time );
+				//time_sub ( &ref_time, &time );
 				arch_timer_set ( &ref_time, ktimer_schedule );
 			}
 			/* evade this behaviour! */
@@ -344,7 +344,7 @@ static void ktimer_schedule ()
 			if ( first )
 			{
 				ref_time = first->itimer.it_value;
-				time_sub ( &ref_time, &time );
+				//time_sub ( &ref_time, &time );
 				arch_timer_set ( &ref_time, ktimer_schedule );
 			}
 			break;
