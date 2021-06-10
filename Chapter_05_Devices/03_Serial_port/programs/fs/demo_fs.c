@@ -50,5 +50,5 @@ int disk_demo ()
 
     printf("Do all characters read from file equal \'a\'? %d\n", is_ok);
 
-    return 1;
+    return 0;
 }
